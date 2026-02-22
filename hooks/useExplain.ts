@@ -1,34 +1,67 @@
 "use client"
 
 import { useState } from "react"
-import { ExplainResponse } from "@/types/explain"
-import { mockResponse } from "@/lib/mockData"
+import type {
+  ExplainApiResponse,
+  ExplainMode,
+  ExplainResponse,
+} from "@/types/explain"
 
 export function useExplain() {
-  const [result, setResult] = useState<ExplainResponse | null>(null)
+  const [explain, setExplain] = useState<ExplainResponse | null>(null)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const explainCode = async (code: string, language: string) => {
+  const runExplain = async (
+    code: string,
+    language: string,
+    mode: ExplainMode = "beginner"
+  ) => {
+    const safeCode = typeof code === "string" ? code : ""
+    const safeLanguage = typeof language === "string" ? language : "unknown"
+    const safeMode: ExplainMode = mode === "detailed" ? "detailed" : "beginner"
+
+    if (!safeCode.trim()) {
+      setError("Code is required.")
+      setExplain(null)
+      return
+    }
+
     setLoading(true)
+    setError(null)
 
-    // 🔹 MOCK MODE (replace later with API call)
-    await new Promise((res) => setTimeout(res, 1500))
-    setResult(mockResponse)
+    try {
+      const res = await fetch("/api/explain", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code: safeCode,
+          language: safeLanguage,
+          mode: safeMode,
+        }),
+      })
 
-    // 🔹 FUTURE REAL API CALL
-    /*
-    const res = await fetch("/api/explain", {
-      method: "POST",
-      body: JSON.stringify({ code, language }),
-      headers: { "Content-Type": "application/json" },
-    })
+      const data = (await res.json()) as ExplainApiResponse
+      console.log("[useExplain] API response:", data)
 
-    const data = await res.json()
-    setResult(data)
-    */
+      if (!res.ok || !data?.success || !data?.data) {
+        const message = data?.error || "Failed to explain code."
+        setError(message)
+        setExplain(null)
+        return
+      }
 
-    setLoading(false)
+      setExplain(data.data)
+    } catch (err) {
+      console.error("[useExplain] API error:", err)
+      setError("Something went wrong while explaining code.")
+      setExplain(null)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  return { result, loading, explainCode }
+  return { explain, loading, error, runExplain }
 }

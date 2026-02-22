@@ -15,19 +15,37 @@ export default function ResultPanel({ result }: Props) {
       </div>
 
       <div>
-        <h2 className="font-semibold">Issues</h2>
+        <h2 className="font-semibold">Line by Line</h2>
         <ul className="list-disc pl-5">
-          {result.issues.map((issue, i) => (
-            <li key={i}>{issue}</li>
+          {result.line_by_line.map((item, i) => (
+            <li key={`${item.line}-${i}`}>
+              <span className="font-medium">{item.line}:</span> {item.explanation}
+            </li>
           ))}
         </ul>
       </div>
 
       <div>
-        <h2 className="font-semibold">Improved Code</h2>
+        <h2 className="font-semibold">Issues</h2>
+        <ul className="list-disc pl-5">
+          {result.issues.map((item, i) => (
+            <li key={`${item.issue}-${i}`}>
+              <span className="font-medium">{item.issue}</span> - {item.fix}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h2 className="font-semibold">Optimized Code</h2>
         <pre className="bg-gray-100 p-3 rounded overflow-auto">
-          {result.improvedCode}
+          {result.optimized_code}
         </pre>
+      </div>
+
+      <div>
+        <h2 className="font-semibold">Time Complexity</h2>
+        <p>{result.time_complexity}</p>
       </div>
     </div>
   )
