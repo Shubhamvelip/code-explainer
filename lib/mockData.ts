@@ -23,6 +23,7 @@ export const mockResponse: ExplainResponse = {
       fix: "Validate inputs before adding to avoid unexpected results.",
     },
   ],
+  error_lines: [1],
   optimized_code: "function add(a, b) { return Number(a) + Number(b); }",
   time_complexity: "O(1)",
 }

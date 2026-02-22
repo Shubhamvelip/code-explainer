@@ -37,6 +37,15 @@ export default function ResultPanel({ result }: Props) {
       </div>
 
       <div>
+        <h2 className="font-semibold">Error Lines</h2>
+        <p>
+          {result.error_lines.length > 0
+            ? result.error_lines.join(", ")
+            : "No syntax issues or bad practices detected."}
+        </p>
+      </div>
+
+      <div>
         <h2 className="font-semibold">Optimized Code</h2>
         <pre className="bg-gray-100 p-3 rounded overflow-auto">
           {result.optimized_code}

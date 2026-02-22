@@ -20,6 +20,7 @@ export type ExplainResponse = {
   explanation: string
   line_by_line: ExplainLine[]
   issues: ExplainIssue[]
+  error_lines: number[]
   optimized_code: string
   time_complexity: string
 }
