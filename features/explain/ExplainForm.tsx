@@ -46,7 +46,7 @@ export default function ExplainForm() {
 
       {error && (
         <p className="text-center text-red-600">
-          {error}
+          Something went wrong. Please try again.
         </p>
       )}
 

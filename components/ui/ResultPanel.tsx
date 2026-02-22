@@ -15,7 +15,7 @@ export default function ResultPanel({ result }: Props) {
       </div>
 
       <div>
-        <h2 className="font-semibold">Line by Line</h2>
+        <h2 className="font-semibold">Line-by-line</h2>
         <ul className="list-disc pl-5">
           {result.line_by_line.map((item, i) => (
             <li key={`${item.line}-${i}`}>
@@ -34,15 +34,6 @@ export default function ResultPanel({ result }: Props) {
             </li>
           ))}
         </ul>
-      </div>
-
-      <div>
-        <h2 className="font-semibold">Error Lines</h2>
-        <p>
-          {result.error_lines.length > 0
-            ? result.error_lines.join(", ")
-            : "No syntax issues or bad practices detected."}
-        </p>
       </div>
 
       <div>

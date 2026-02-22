@@ -17,46 +17,39 @@ export function useExplain() {
     language: string,
     mode: ExplainMode = "beginner"
   ) => {
-    const safeCode = typeof code === "string" ? code : ""
-    const safeLanguage = typeof language === "string" ? language : "unknown"
-    const safeMode: ExplainMode = mode === "detailed" ? "detailed" : "beginner"
-
-    if (!safeCode.trim()) {
-      setError("Code is required.")
-      setExplain(null)
-      return
-    }
-
     setLoading(true)
     setError(null)
 
     try {
-      const res = await fetch("/api/explain", {
+      const response = await fetch("/api/explain", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          code: safeCode,
-          language: safeLanguage,
-          mode: safeMode,
+          code,
+          language,
+          mode,
         }),
       })
 
-      const data = (await res.json()) as ExplainApiResponse
-      console.log("[useExplain] API response:", data)
-
-      if (!res.ok || !data?.success || !data?.data) {
-        const message = data?.error || "Failed to explain code."
-        setError(message)
-        setExplain(null)
-        return
+      if (!response.ok) {
+        throw new Error("Failed to explain code.")
       }
 
-      setExplain(data.data)
+      const responseData = (await response.json()) as ExplainApiResponse
+      console.log("[useExplain] API response:", responseData)
+
+      if (!responseData?.data) {
+        throw new Error("Invalid response from server.")
+      }
+
+      setExplain(responseData.data)
     } catch (err) {
       console.error("[useExplain] API error:", err)
-      setError("Something went wrong while explaining code.")
+      const message =
+        err instanceof Error ? err.message : "Something went wrong."
+      setError(message)
       setExplain(null)
     } finally {
       setLoading(false)
